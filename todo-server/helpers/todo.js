@@ -34,7 +34,6 @@ const getUserTodos = async (userId, filters = {}) =>
           offset: parseInt(filters.pageIndex, 10) * parseInt(filters.pageSize, 10) - parseInt(filters.pageSize, 10),
         }
       : {}),
-    logging: true,
   });
 
 module.exports = {

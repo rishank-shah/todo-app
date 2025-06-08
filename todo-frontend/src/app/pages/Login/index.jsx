@@ -6,7 +6,6 @@ import { useAuth } from "../../providers/Auth";
 import CookieHelper from "../../helpers/cookie";
 import { authExpireAt } from "../../helpers/auth";
 import COOKIE from "../../constants/cookie";
-import { passwordValidator } from "../../../utils/validator";
 
 export function Login() {
   const { handleLogin } = useAuth();
@@ -33,10 +32,8 @@ export function Login() {
       errs.email = "Email is required";
     }
 
-    const passwordError = passwordValidator(form.password);
-
-    if (passwordError) {
-      errs.password = passwordError;
+    if (!form.password) {
+      errs.password = "Password is required";
     }
 
     return errs;

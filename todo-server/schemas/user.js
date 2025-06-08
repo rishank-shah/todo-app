@@ -26,7 +26,7 @@ const userAddEditBody = {
 const userLoginBody = {
   body: joi.object().keys({
     email: emailSchema,
-    password: passwordSchema,
+    password: joi.string().min(1).max(30).required(),
   }),
 };
 
