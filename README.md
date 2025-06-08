@@ -10,7 +10,8 @@
     - `npm i`
     - Rename `.env.example` to `.env`
     - Add the mysql connection details in `.env` file
-3. Run `node server.js` to run the server on port `8080`
+3. Run `npm run migrate`
+4. Run `node server.js` to run the server on port `8080`
 
 ### Option 2 to run backend
 1. Run `docker compose up`
