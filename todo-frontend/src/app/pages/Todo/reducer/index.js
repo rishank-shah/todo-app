@@ -76,6 +76,62 @@ const todoReducer = (state, action) => {
       };
     }
 
+    case "ADD_SUBTASK":
+      return {
+        ...state,
+        todos: state.todos.map((todo) =>
+          todo.id === action.payload.todoId
+            ? {
+                ...todo,
+                todoSubTasks: [
+                  ...todo.todoSubTasks,
+                  {
+                    id: action.payload.id,
+                    title: action.payload.title,
+                    status: action.payload.status,
+                    todoId: action.payload.todoId,
+                  },
+                ],
+              }
+            : todo
+        ),
+      };
+
+    case "UPDATE_SUBTASK":
+      return {
+        ...state,
+        todos: state.todos.map((todo) =>
+          todo.id === action.payload.todoId
+            ? {
+                ...todo,
+                todoSubTasks: todo.todoSubTasks.map((subTask) =>
+                  subTask.id === action.payload.id
+                    ? {
+                        ...subTask,
+                        ...action.payload,
+                      }
+                    : subTask
+                ),
+              }
+            : todo
+        ),
+      };
+
+    case "DELETE_SUBTASK":
+      return {
+        ...state,
+        todos: state.todos.map((todo) =>
+          todo.id === action.payload.todoId
+            ? {
+                ...todo,
+                todoSubTasks: todo.todoSubTasks.filter(
+                  (subTask) => subTask.id !== action.payload.id
+                ),
+              }
+            : todo
+        ),
+      };
+
     default:
       return state;
   }

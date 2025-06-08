@@ -246,11 +246,15 @@ const updateSubTask = async (userId, subTaskId, { title, status, todoId } = {}) 
     status,
   });
 
-  return todo.toJSON().todoSubTasks[0];
+  return {
+    todoId,
+    ...todo.toJSON().todoSubTasks[0],
+  };
 };
 
 const deleteSubtask = async (userId, subTaskId) => {
   const subTask = await models.SubTasks.findOne({
+    attributes: ['id'],
     where: {
       id: subTaskId,
     },

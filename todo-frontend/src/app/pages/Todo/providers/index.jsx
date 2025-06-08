@@ -172,6 +172,59 @@ export const TodoProvider = ({ children }) => {
     }
   };
 
+  const addSubTask = async (subTaskData = {}) => {
+    try {
+      const subtask = await todoService.createSubTask(subTaskData);
+
+      dispatch({
+        type: "ADD_SUBTASK",
+        payload: subtask,
+      });
+
+      ToastHelper.SuccessToast("Todo SubTask Added");
+      return true;
+    } catch (err) {
+      ToastHelper.ErrorToast(err.message);
+    }
+    return false;
+  };
+
+  const updateSubTask = async (subTaskId, subTaskData = {}) => {
+    try {
+      const subtask = await todoService.updateSubTask(subTaskId, subTaskData);
+
+      dispatch({
+        type: "UPDATE_SUBTASK",
+        payload: {
+          ...subtask,
+          isEditing: false,
+        },
+      });
+
+      ToastHelper.SuccessToast("Todo SubTask Updated");
+    } catch (err) {
+      ToastHelper.ErrorToast(err.message);
+    }
+  };
+
+  const deleteSubTask = async (subTaskId, todoId) => {
+    try {
+      await todoService.deleteSubtask(subTaskId);
+
+      dispatch({
+        type: "DELETE_SUBTASK",
+        payload: {
+          id: subTaskId,
+          todoId,
+        },
+      });
+
+      ToastHelper.SuccessToast("Todo SubTask Deleted");
+    } catch (err) {
+      ToastHelper.ErrorToast(err.message);
+    }
+  };
+
   const value = {
     state,
     addTodo,
@@ -179,10 +232,13 @@ export const TodoProvider = ({ children }) => {
     deleteTodo,
     updateTodo,
     searchTerm,
+    addSubTask,
     currentPage,
     statusFilter,
     itemsPerPage,
+    updateSubTask,
     setSearchTerm,
+    deleteSubTask,
     setCurrentPage,
     setStatusFilter,
     setItemsPerPage,

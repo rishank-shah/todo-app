@@ -15,7 +15,7 @@ const getUserTodos = async (userId, filters = {}) =>
       ...(filters.todoWhere || {}),
     },
     include: {
-      attributes: ['id', 'title', 'status'],
+      attributes: ['id', 'title', 'status', 'todoId'],
       model: models.SubTasks,
       as: 'todoSubTasks',
       required: false,

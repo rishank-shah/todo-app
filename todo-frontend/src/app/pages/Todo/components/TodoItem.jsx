@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useTodos } from "../providers";
 import STATUS from "../constants/status";
+import SubTaskContainer from "./SubTaskContainer";
+import AddIcon from "../../../components/icons/AddIcon";
 import EditIcon from "../../../components/icons/EditIcon";
 import DeleteIcon from "../../../components/icons/DeleteIcon";
 import HeartButton from "../../../components/buttons/HeartButton";
@@ -18,8 +20,8 @@ export default function TodoItem({ todo }) {
   const [form, setForm] = useState({
     ...todo,
   });
-
   const [showDialog, setShowDialog] = useState(false);
+  const [showAddSubtaskInput, setShowAddSubtaskInput] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -31,107 +33,116 @@ export default function TodoItem({ todo }) {
   const isSelected = state.selectedTodoIds.includes(todo.id);
 
   return (
-    <div style={styles.todoItem}>
-      <div style={styles.todoItemContent}>
-        <input
-          type="checkbox"
-          checked={isSelected}
-          onChange={() =>
-            dispatch({
-              type: "TOGGLE_SELECT",
-              payload: {
-                id: todo.id,
-              },
-            })
-          }
-        />
-        {todo.isEditing ? (
+    <div style={styles.todoItemContainer}>
+      <div style={styles.todoItem}>
+        <div
+          style={styles.addIcon}
+          onClick={() => setShowAddSubtaskInput((i) => !i)}
+        >
+          <AddIcon />
+        </div>
+        <div style={styles.todoItemContent}>
           <input
-            type="text"
-            id="title"
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                updateTodo(todo.id, {
-                  title: form.title,
-                  status: form.status,
-                  categoryId: form.categoryId,
-                  bookmarked: form.bookmarked,
-                });
-              }
-            }}
-            style={{ ...styles.input, flexGrow: 1 }}
-            autoFocus
+            type="checkbox"
+            checked={isSelected}
+            onChange={() =>
+              dispatch({
+                type: "TOGGLE_SELECT",
+                payload: {
+                  id: todo.id,
+                },
+              })
+            }
           />
-        ) : (
-          <span
-            style={{
-              ...styles.todoTitle,
-              display: "inline-block",
-              backgroundColor: STATUS_COLOR_MAP[todo.status],
-            }}
-          >
-            {todo.title}
-          </span>
-        )}
-      </div>
-      <div style={styles.todoActions}>
-        <select
-          value={todo.status}
-          onChange={(e) => {
-            updateTodo(todo.id, {
-              title: todo.title,
-              categoryId: todo.categoryId,
-              status: e.target.value,
-              bookmarked: todo.bookmarked,
-            });
-          }}
-          style={styles.statusSelect}
-        >
-          {STATUS.list.map((i) => (
-            <option key={i.value} value={i.value}>
-              {i.displayName}
-            </option>
-          ))}
-        </select>
-        <button
-          style={styles.iconButton}
-          onClick={() =>
-            dispatch({
-              type: "UPDATE_TODO",
-              payload: {
-                id: todo.id,
-                isEditing: !todo.isEditing,
-              },
-            })
-          }
-        >
-          <EditIcon />
-        </button>
-        <button
-          style={styles.iconButton}
-          onClick={() => {
-            setShowDialog(true);
-          }}
-        >
-          <DeleteIcon />
-        </button>
-        <div style={styles.iconButton}>
-          <HeartButton
-            onClick={() => {
+          {todo.isEditing ? (
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  updateTodo(todo.id, {
+                    title: form.title,
+                    status: form.status,
+                    categoryId: form.categoryId,
+                    bookmarked: form.bookmarked,
+                  });
+                }
+              }}
+              style={{ ...styles.input, flexGrow: 1 }}
+              autoFocus
+            />
+          ) : (
+            <span
+              style={{
+                ...styles.todoTitle,
+                display: "inline-block",
+                backgroundColor: STATUS_COLOR_MAP[todo.status],
+              }}
+            >
+              {todo.title}
+            </span>
+          )}
+        </div>
+        <div style={styles.todoActions}>
+          <select
+            value={todo.status}
+            onChange={(e) => {
               updateTodo(todo.id, {
                 title: todo.title,
-                status: todo.status,
                 categoryId: todo.categoryId,
-                bookmarked: !todo.bookmarked,
+                status: e.target.value,
+                bookmarked: todo.bookmarked,
               });
             }}
-            filled={todo.bookmarked}
-          />
+            style={styles.statusSelect}
+          >
+            {STATUS.list.map((i) => (
+              <option key={i.value} value={i.value}>
+                {i.displayName}
+              </option>
+            ))}
+          </select>
+          <button
+            style={styles.iconButton}
+            onClick={() =>
+              dispatch({
+                type: "UPDATE_TODO",
+                payload: {
+                  id: todo.id,
+                  isEditing: !todo.isEditing,
+                },
+              })
+            }
+          >
+            <EditIcon />
+          </button>
+          <button
+            style={styles.iconButton}
+            onClick={() => {
+              setShowDialog(true);
+            }}
+          >
+            <DeleteIcon />
+          </button>
+          <div style={styles.iconButton}>
+            <HeartButton
+              onClick={() => {
+                updateTodo(todo.id, {
+                  title: todo.title,
+                  status: todo.status,
+                  categoryId: todo.categoryId,
+                  bookmarked: !todo.bookmarked,
+                });
+              }}
+              filled={todo.bookmarked}
+            />
+          </div>
         </div>
       </div>
+      {showAddSubtaskInput && <SubTaskContainer todo={todo} />}
       {showDialog && (
         <ConfirmDialog
           title="Delete todo"
@@ -148,6 +159,15 @@ export default function TodoItem({ todo }) {
 }
 
 const styles = {
+  todoItemContainer: {
+    backgroundColor: "#fff",
+    borderBottom: "1px solid #e9ecef",
+  },
+  addIcon: {
+    marginTop: "4px",
+    marginRight: "5px",
+    cursor: "pointer",
+  },
   input: {
     width: "100%",
     padding: "8px 12px",
@@ -161,8 +181,6 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     padding: "12px 16px",
-    backgroundColor: "#fff",
-    borderBottom: "1px solid #e9ecef",
   },
   todoItemContent: {
     display: "flex",
